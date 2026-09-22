@@ -1,68 +1,328 @@
-# Candidate Ranker
+# Candidate Ranker — Intelligent Candidate Discovery & Ranking
 
-## Stage 0
+An intelligent **candidate discovery and ranking system** designed to identify and rank the most relevant candidates for a given job description.
 
-Stage 0 loads `data/candidates.jsonl`, validates each record, and writes normalized `CandidateProfile` rows.
+The system combines **hybrid retrieval, feature engineering, rule-based scoring, and LLM-assisted reranking** to move beyond simple keyword matching and produce a more relevant candidate shortlist.
 
-Run it with:
+> Built for the **IndiaRuns / Redrob Intelligent Candidate Discovery & Ranking Challenge**.
 
-```bash
-python offline/stage0_pipeline.py \
-  --input data/candidates.jsonl \
-  --output data/stage0/candidate_profiles.jsonl \
-  --report data/stage0/report.json
+---
+
+## 🚀 Overview
+
+Traditional resume screening systems often rely heavily on keyword matching. This can result in:
+
+* Candidates being ranked highly because of superficial keyword overlap
+* Strong candidates being missed because they use different terminology
+* Difficulty distinguishing between similar but contextually different roles
+* Poor handling of experience, skills, seniority, and role relevance
+
+**Candidate Ranker** addresses these problems through a multi-stage retrieval and ranking pipeline.
+
 ```
 
-The stage writes a JSONL of validated profiles and a JSON validation report with any rejected rows.
+---
 
-## Stage 1
+## ✨ Key Features
 
-Stage 1 turns each validated `CandidateProfile` into a deterministic `CandidateDocument` with:
+### 🔎 Hybrid Candidate Retrieval
 
-- `embedding_text` for later vectorization
-- `metadata` for pre-retrieval filtering
-- `ranking_features` for downstream scoring
+Combines two complementary retrieval approaches:
 
-Run the smoke test with:
+* **Dense semantic retrieval** — captures contextual and semantic similarity
+* **BM25 retrieval** — captures important exact keyword and terminology matches
 
-```bash
-python stage1_features/tests/candidate_builder.py
+The hybrid retriever combines both signals using:
+
+```text
+Hybrid Score = 0.65 × Dense Score + 0.35 × BM25 Score
 ```
 
-## Stage 2
+This helps balance semantic understanding with exact skill and terminology matching.
 
-Stage 2 converts a `CandidateDocument` into an embedding and stores it in a FAISS-ready structure.
+---
 
-Run the smoke test with:
+### 🧠 Multi-Stage Ranking
 
-```bash
-python backend/stage2_embeddings/tests/candidate_builder.py
+Rather than comparing every candidate in a lakhs of others using an expensive ranking model, the system progressively narrows the candidate pool.
+
+```text
+Large Candidate Pool
+        ↓
+Initial Retrieval
+        ↓
+Hybrid Ranking
+        ↓
+Top Candidates
+        ↓
+Feature-Based Scoring
+        ↓
+LLM Reranking
+        ↓
+Final Top Candidates
 ```
 
-Build the full Stage 2 index from Stage 0 output with:
+This provides a practical balance between **ranking quality and computational efficiency**.
 
-```bash
-python backend/stage2_embeddings/build_index.py \
-  --input data/stage0/candidate_profiles.jsonl \
-  --output-dir data/stage2
+---
+
+### 📊 Feature-Based Candidate Scoring
+
+Candidates are evaluated using multiple signals extracted from their profiles.
+
+Examples include:
+
+* Skills
+* Years of experience
+* Job titles
+* Education
+* Relevant domains
+* Role similarity
+* Seniority
+* Required vs. optional skills
+* Experience alignment
+* Semantic relevance
+
+The scoring stage combines these signals into a final candidate relevance score.
+
+---
+
+### 🤖 LLM-Assisted Reranking
+
+The final shortlist can be further evaluated using an LLM to capture contextual relationships that simple similarity metrics may miss.
+
+For example, the system can distinguish between:
+
+> A candidate with the right keywords but experience in an unrelated role
+
+and
+
+> A candidate whose experience is highly relevant even though their resume uses different terminology.
+
+
+## 🖥️ Interface
+
+The project includes a **Streamlit interface** for interacting with the candidate ranking pipeline.
+
+Typical workflow:
+
+```text
+1. Provide Job Description
+          ↓
+2. Parse JD
+          ↓
+3. Retrieve Candidates
+          ↓
+4. Score Candidates
+          ↓
+5. Rerank
+          ↓
+6. Display Ranked Candidates
 ```
 
-## Stage 3
+---
 
-Stage 3 retrieves candidates with semantic FAISS search and lexical BM25 search, then merges both using RRF.
+## 📁 Data
 
-Run the smoke test with:
+The project works with candidate profile data and job descriptions.
 
-```bash
-python backend/stage3_retrieval/tests/hybrid_retriever.py
+Large datasets and generated retrieval artifacts are **not stored in the Git repository** to keep the repository lightweight.
+
+Examples of excluded artifacts include:
+
+```text
+data/stage0/
+data/stage2/
+data/candidates.jsonl
 ```
 
-## Stage 4
+These files can be generated locally as part of the preprocessing and indexing pipeline.
 
-Stage 4 scores retrieved candidates using JobProfile matchers, bonuses, penalties, and configurable weights on a 0-100 scale.
+---
 
-Run the smoke test with:
+## ⚙️ Installation
+
+### 1. Clone the repository
 
 ```bash
-python backend/stage4_scoring/tests/scorer.py
+git clone https://github.com/Janhavi2101/Candidate-Ranker-IndiaRuns_Hackathon.git
+
+cd Candidate-Ranker-IndiaRuns_Hackathon
 ```
+
+### 2. Create a virtual environment
+
+```bash
+python -m venv venv
+```
+
+Activate it on macOS/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+On Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## ▶️ Running the Application
+
+Start the Streamlit application:
+
+```bash
+streamlit run app/streamlit.py
+```
+
+The application will open in your browser.
+
+---
+
+## 📌 Example
+
+Given a job description such as:
+
+```text
+Senior NLP Engineer
+
+Requirements:
+- Python
+- NLP
+- Transformers
+- PyTorch
+- Machine Learning
+- Experience building NLP systems
+```
+
+the system:
+
+```text
+Job Description
+       ↓
+Extract requirements
+       ↓
+Generate semantic representation
+       ↓
+Dense retrieval
+       +
+BM25 retrieval
+       ↓
+Hybrid candidate pool
+       ↓
+Feature-based scoring
+       ↓
+LLM reranking
+       ↓
+Ranked candidates
+```
+
+This allows the system to identify candidates based on **overall relevance**, rather than simply counting matching keywords.
+
+---
+
+## 🧪 Diagnostics & Testing
+
+The repository includes diagnostic and testing utilities for evaluating retrieval and scoring behavior.
+
+Examples:
+
+```text
+backend/stage3_retrieval/tests/
+backend/test/
+```
+
+These can be used to investigate:
+
+* Retrieval quality
+* Candidate demotions
+* Keyword-vs-semantic conflicts
+* Scoring behavior
+* Ranking consistency
+
+---
+
+## 🎯 Design Goals
+
+The project was designed around four main principles:
+
+### 1. Relevance over keyword matching
+
+A candidate should not rank highly solely because their profile contains many matching keywords.
+
+### 2. Multi-signal ranking
+
+Candidate relevance should be determined using multiple independent signals.
+
+### 3. Efficient retrieval
+
+Expensive ranking operations should be applied only to a smaller candidate pool.
+
+### 4. Explainable ranking
+
+The ranking pipeline should provide interpretable signals that help understand why candidates are ranked differently.
+
+---
+
+## 🚧 Future Improvements
+
+Potential improvements include:
+
+* Fine-tuned domain-specific embedding models
+* Learning-to-rank models
+* Improved skill taxonomy and normalization
+* Better handling of synonymous skills
+* Candidate-to-JD skill gap analysis
+* More robust seniority detection
+* Explainable candidate ranking
+* Evaluation using Precision@K, Recall@K, NDCG@K and MRR
+* Automated hyperparameter optimization
+* Fairness and bias evaluation
+* Scalable vector database integration
+* Improved LLM reranking efficiency
+
+---
+
+## 📈 Evaluation
+
+The ranking pipeline can be evaluated using information-retrieval metrics such as:
+
+```text
+Precision@K
+Recall@K
+MRR
+NDCG@K
+```
+
+These metrics can help measure whether relevant candidates consistently appear near the top of the ranking.
+
+---
+
+## 👩‍💻 Author
+
+**Janhavi Gangawane**
+
+B.E. Artificial Intelligence & Data Science
+
+Interested in **Machine Learning, Generative AI, Data Science, and AI Engineering**.
+
+---
+
+## ⭐ Acknowledgements
+
+Developed as part of the **IndiaRuns / Redrob Intelligent Candidate Discovery & Ranking Challenge**.
+
+---
+
+## 📜 License
+
+This project is intended for educational, research, and hackathon purposes.
