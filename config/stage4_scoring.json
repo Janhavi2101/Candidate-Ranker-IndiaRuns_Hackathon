@@ -1,0 +1,80 @@
+{
+  "component_weights": {
+    "retrieval": 0.25,
+    "technical": 0.22,
+    "experience": 0.18,
+    "education": 0.08,
+    "company": 0.08,
+    "behavioral": 0.14,
+    "consistency": 0.05
+  },
+  "retrieval_subweights": {
+    "semantic": 0.4,
+    "bm25": 0.4,
+    "rrf": 0.2
+  },
+  "technical_weights": {
+    "required_skill_coverage": 0.5,
+    "preferred_skill_coverage": 0.2,
+    "skill_similarity": 0.2,
+    "skill_proficiency": 0.1
+  },
+  "experience_weights": {
+    "years": 0.5,
+    "title_similarity": 0.3,
+    "industry_match": 0.2
+  },
+  "education_weights": {
+    "degree": 0.4,
+    "field": 0.4,
+    "institution": 0.2
+  },
+  "company_weights": {
+    "industry_match": 0.7,
+    "company_size_match": 0.3
+  },
+  "behavioral_weights": {
+    "profile_completeness": 0.3,
+    "response_rate": 0.25,
+    "github": 0.2,
+    "interview_completion": 0.15,
+    "endorsements": 0.1
+  },
+  "bonus_rules": {
+    "open_to_work": 1.5,
+    "verified_email": 1.0,
+    "verified_phone": 1.0,
+    "linkedin_connected": 1.0,
+    "exceptional_github_activity": 1.5,
+    "excellent_assessment_scores": 1.5,
+    "high_recruiter_engagement": 1.0
+  },
+  "penalty_rules": {
+    "missing_required_skill": 5.0,
+    "experience_gap_per_year": 4.0,
+    "notice_period_long": 2.0,
+    "salary_above_budget": 4.0,
+    "work_mode_mismatch": 3.0,
+    "relocation_mismatch": 3.0,
+    "low_profile_quality": 3.0,
+    "low_recruiter_response": 3.0,
+    "inactive_profile": 2.0,
+    "poor_career_stability": 3.0
+  },
+  "penalty_caps": {
+    "missing_required_skill": 10.0,
+    "experience_gap": 5.0
+  },
+  "thresholds": {
+    "exceptional_github_activity": 80.0,
+    "excellent_assessment_score": 70.0,
+    "high_recruiter_response_rate": 0.65,
+    "low_profile_quality": 70.0,
+    "low_recruiter_response_rate": 0.3,
+    "inactive_profile_days": 45.0,
+    "long_notice_period_days": 90.0,
+    "salary_buffer": 0.0
+  },
+  "base_score": 35.0,
+  "final_score_scale": 100.0
+}

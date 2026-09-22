@@ -1,0 +1,43 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment/secrets
+.env
+.env.*
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+
+# Generated files
+outputs/
+results/
+
+# Large/local data
+*.pkl
+*.pickle
+*.bin
+*.pt
+*.pth
+*.index
+
+# Temporary files
+*.tmp
+*.temp
+
+data/stage2/
+data/stage0/
+data/candidates.jsonl
