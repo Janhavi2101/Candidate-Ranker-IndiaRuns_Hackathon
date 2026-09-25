@@ -1,4 +1,4 @@
-# Candidate Ranker — Intelligent Candidate Discovery & Ranking
+# Candidate Ranker — Intelligent Candidate Resume Ranking
 
 An intelligent **candidate discovery and ranking system** designed to identify and rank the most relevant candidates for a given job description.
 
@@ -19,7 +19,7 @@ Traditional resume screening systems often rely heavily on keyword matching. Thi
 
 **Candidate Ranker** addresses these problems through a multi-stage retrieval and ranking pipeline.
 
-```
+
 
 ---
 
@@ -185,69 +185,6 @@ streamlit run app/streamlit.py
 ```
 
 The application will open in your browser.
-
----
-
-## 📌 Example
-
-Given a job description such as:
-
-```text
-Senior NLP Engineer
-
-Requirements:
-- Python
-- NLP
-- Transformers
-- PyTorch
-- Machine Learning
-- Experience building NLP systems
-```
-
-the system:
-
-```text
-Job Description
-       ↓
-Extract requirements
-       ↓
-Generate semantic representation
-       ↓
-Dense retrieval
-       +
-BM25 retrieval
-       ↓
-Hybrid candidate pool
-       ↓
-Feature-based scoring
-       ↓
-LLM reranking
-       ↓
-Ranked candidates
-```
-
-This allows the system to identify candidates based on **overall relevance**, rather than simply counting matching keywords.
-
----
-
-## 🧪 Diagnostics & Testing
-
-The repository includes diagnostic and testing utilities for evaluating retrieval and scoring behavior.
-
-Examples:
-
-```text
-backend/stage3_retrieval/tests/
-backend/test/
-```
-
-These can be used to investigate:
-
-* Retrieval quality
-* Candidate demotions
-* Keyword-vs-semantic conflicts
-* Scoring behavior
-* Ranking consistency
 
 ---
 
